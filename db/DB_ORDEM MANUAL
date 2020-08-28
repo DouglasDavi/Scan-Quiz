@@ -1,0 +1,66 @@
+CREATE DATABASE `aplicativoquiz`;
+USE aplicativoquiz;
+
+CREATE TABLE `perfil_acesso` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `perfil` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+INSERT INTO `perfil_acesso` (`id`, `perfil`) VALUES
+(1, 'admin'),
+(2, 'normal'),
+(3, 'restrito');
+
+CREATE TABLE `usuarios` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `senha` varchar(255) NOT NULL,
+  `id_acesso` int(11) NOT NULL DEFAULT '3',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `fk_perfil_acesso_id_idx` (`id_acesso`),
+  CONSTRAINT `fk_perfil_acesso_id` FOREIGN KEY (`id_acesso`) REFERENCES `perfil_acesso` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `perguntas` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `pergunta_titulo` blob NOT NULL,
+  `user_ID` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `fk_id_usuario_idx` (`user_ID`),
+  CONSTRAINT `fk_id_usuario` FOREIGN KEY (`user_ID`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `respostas_opc` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `respostas_opc` varchar(255) NOT NULL,
+  `id_perguntas` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `fk_perguntas_id_idx` (`id_perguntas`),
+  CONSTRAINT `fk_perguntas_id` FOREIGN KEY (`id_perguntas`) REFERENCES `perguntas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `resposta_verdadeira` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_resposta` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `fk_id_resposta_opc_idx` (`id_resposta`),
+  CONSTRAINT `fk_id_resposta_opc` FOREIGN KEY (`id_resposta`) REFERENCES `respostas_opc` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `usuario_resposta` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `usuario` int(11) NOT NULL,
+  `id_pergunta` int(11) NOT NULL,
+  `resposta` int(11) NOT NULL,
+  `evento` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
